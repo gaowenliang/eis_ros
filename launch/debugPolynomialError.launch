@@ -1,9 +1,0 @@
-<launch>
-
-    <node pkg="fisheye_model" type="debugPolynomialError" name="fisheye" output="screen">
-        <param name="camera_model" type="string"
-        value="/home/gao/ws2/devel/lib/camera_model/px_fisheye_camera_calib.yaml"/>
-
-    </node>
-
-</launch>

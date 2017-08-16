@@ -1,9 +1,0 @@
-<launch>
-
-    <node pkg="fisheye_model" type="fisheyeMaskGenerate" name="fisheye" output="screen">
-    <param name="camera_model" type="string" value= "/home/gao/ws2/src/VINS-Mono/config/A3/A3_config.yaml"/>
-    <param name="output_image" type="string" value= "/home/gao/ws2/devel/lib/camera_model/blue65_test_small_fisheye_camera_calib_mask.jpg"/>
-    <param name="maskFOV" type="int" value= "165"/>
-    </node>
-
-</launch>

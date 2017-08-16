@@ -1,0 +1,17 @@
+<launch>
+
+    <node pkg="fisheye_model" type="testPub" name="CameraUp" output="screen">
+        <remap from="~image_raw" to="/stereo/left/image_raw"/>
+        <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/blue4265/IMG00000000000000000789.png"/>
+        <param name="is_image_show" type="bool" value="false"/>
+        <param name="pub_freq" type="double" value="15"/>
+    </node>
+
+    <node pkg="fisheye_model" type="testPub" name="CameraDown" output="screen">
+        <remap from="~image_raw" to="/stereo/right/image_raw"/>
+        <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/blue4265/IMG00000000000000000714.png"/>
+        <param name="is_image_show" type="bool" value="false"/>
+        <param name="pub_freq" type="double" value="15"/>
+    </node>
+
+</launch>

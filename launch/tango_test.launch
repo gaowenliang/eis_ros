@@ -1,0 +1,9 @@
+<launch>
+
+    <node pkg="fisheye_model" type="reproject_test" name="fisheye" output="screen">
+        <param name="camera_model" type="string" value="/home/gao/ws2/devel/lib/camera_model/tango_fov_camera_calib.yaml"/>
+        <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/tango/image_00351.pgm"/>
+<!--        <param name="max_image_size" type="int" value="640"/>-->
+    </node>
+
+</launch>

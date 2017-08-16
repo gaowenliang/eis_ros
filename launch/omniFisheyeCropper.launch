@@ -1,0 +1,35 @@
+<launch>
+
+<node pkg="fisheye_model" type="omniFisheyeCropper" name="fisheyeUp" output="screen">
+    <remap from="~image_raw" to="/stereo/left/image_raw"/>
+    <param name="imgF" type="string" value="up/image/F"/>
+    <param name="imgB" type="string" value="up/image/B"/>
+    <param name="imgL" type="string" value="up/image/L"/>
+    <param name="imgR" type="string" value="up/image/R"/>
+    <param name="imgFInfo" type="string" value="up/camera_info"/>
+    <param name="camera_model" type="string" value="$(find fisheye_model)/config/blue93_fisheye_camera_calib.yaml"/>
+    <param name="cropper_file" type="string" value="$(find fisheye_model)/config/fisheyeUp.yaml"/>
+    <param name="is_image_show" type="bool" value="false"/>
+    <param name="angle_row" type="double" value="65.0"/>
+    <param name="angle_col" type="double" value="90.0"/>
+    <param name="max_image_size" type="int" value="320"/>
+    <param name="camera_num" type="int" value="4"/>
+</node>
+
+<node pkg="fisheye_model" type="omniFisheyeCropper" name="fisheyeDown" output="screen">
+    <remap from="~image_raw" to="/stereo/right/image_raw"/>
+    <param name="imgF" type="string" value="down/image/F"/>
+    <param name="imgB" type="string" value="down/image/B"/>
+    <param name="imgL" type="string" value="down/image/L"/>
+    <param name="imgR" type="string" value="down/image/R"/>
+    <param name="imgFInfo" type="string" value="down/camera_info"/>
+    <param name="camera_model" type="string" value="$(find fisheye_model)/config/blue65_fisheye_camera_calib.yaml"/>
+    <param name="stereo_model" type="string" value="$(find fisheye_model)/config/stereo.yaml"/>
+    <param name="cropper_file" type="string" value="$(find fisheye_model)/config/fisheyeDown.yaml"/>
+    <param name="is_image_show" type="bool" value="false"/>
+    <param name="angle_row" type="double" value="65.0"/>
+    <param name="angle_col" type="double" value="90.0"/>
+    <param name="max_image_size" type="int" value="320"/>
+</node>
+
+</launch>

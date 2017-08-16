@@ -1,0 +1,38 @@
+<launch>
+
+<node pkg="fisheye_model" type="omniFisheyeCropper" name="fisheyeUp" output="screen">
+    <remap from="~image_raw" to="/stereo/left/image_raw"/>
+    <param name="imgF" type="string" value="F/left/image_raw"/>
+    <param name="imgB" type="string" value="B/left/image_raw"/>
+    <param name="imgL" type="string" value="L/left/image_raw"/>
+    <param name="imgR" type="string" value="R/left/image_raw"/>
+    <param name="imgFInfo" type="string" value="F/left/camera_info"/>
+    <param name="camera_model" type="string" value="$(find fisheye_model)/config/blue4293_fisheye_camera_calib.yaml"/>
+    <param name="cropper_file" type="string" value="$(find fisheye_model)/config/fisheyeUp.yaml"/>
+    <param name="is_image_show" type="bool" value="false"/>
+    <param name="angle_row" type="double" value="65.0"/>
+    <param name="angle_col" type="double" value="90.0"/>
+    <param name="max_image_size" type="int" value="320"/>
+<!--        <param name="max_image_size" type="int" value="320"/>-->
+</node>
+
+<node pkg="fisheye_model" type="omniFisheyeCropper" name="fisheyeDown" output="screen">
+    <remap from="~image_raw" to="/stereo/right/image_raw"/>
+    <param name="imgF" type="string" value="F/right/image_raw"/>
+    <param name="imgB" type="string" value="B/right/image_raw"/>
+    <param name="imgL" type="string" value="L/right/image_raw"/>
+    <param name="imgR" type="string" value="R/right/image_raw"/>
+    <param name="imgFInfo" type="string" value="F/right/camera_info"/>
+    <param name="camera_model" type="string" value="$(find fisheye_model)/config/blue4265_fisheye_camera_calib.yaml"/>
+    <param name="stereo_model" type="string" value="$(find fisheye_model)/config/stereo.yaml"/>
+    <param name="cropper_file" type="string" value="$(find fisheye_model)/config/fisheyeDown.yaml"/>
+    <param name="is_image_show" type="bool" value="false"/>
+    <param name="angle_row" type="double" value="65.0"/>
+    <param name="angle_col" type="double" value="90.0"/>
+    <param name="max_image_size" type="int" value="320"/>
+<!--        <param name="max_image_size" type="int" value="320"/>-->
+</node>
+<!-- ROS_NAMESPACE=F rosrun stereo_image_proc stereo_image_proc-->
+
+
+</launch>

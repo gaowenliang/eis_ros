@@ -1,0 +1,20 @@
+<launch>
+
+    <node pkg="fisheye_model" type="reproject_test" name="fisheye" output="screen">
+<!--        <param name="camera_model" type="string" value="$(find fisheye_model)/config/blue4293_fisheye_camera_calib.yaml"/>-->
+    <param name="camera_model" type="string" value="/home/gao/ws2/devel/lib/camera_model/17221110_camera_calib.yaml"/>
+    <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/pg_17221110/IMG_16.jpg"/>
+
+<!--    <param name="camera_model" type="string" value="/home/gao/ws2/devel/lib/camera_model/blue65_fisheye_camera_calib.yaml"/>
+    <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/blue65/IMG00000000000000000013.bmp"/>-->
+
+<!--<param name="camera_model" type="string" value="/home/gao/ws2/devel/lib/camera_model/dji-right_pinhole_camera_calib.yaml"/>
+    <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/dji-right/22.png"/>-->
+
+<!--<param name="camera_model" type="string" value="/home/gao/ws2/devel/lib/camera_model/blue93_fisheye_camera_calib.yaml"/>
+    <param name="image_name" type="string" value="/home/gao/ws2/devel/lib/camera_model/blue93/IMG00000000000000001103.bmp"/>-->
+
+<!--        <param name="max_image_size" type="int" value="640"/>-->
+    </node>
+
+</launch>

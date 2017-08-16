@@ -33,24 +33,26 @@ imageProcessCallback( const sensor_msgs::ImageConstPtr& image_msg, const sensor_
         Eigen::Quaterniond q_ec_init = q_eb * q_bC;
         q_ec_tgt                     = q_ec_init;
         is_first_run                 = false;
+        std::cout << "[#IFNO] Initialized done." << std::endl;
     }
     else
     {
-        Eigen::Quaterniond q_Cc;
+        Eigen::Quaterniond q_Cc = q_bC.conjugate( ) * q_eb.conjugate( ) * q_ec_tgt;
 
         cv::Mat image_eis = m_eis->process( image_in, q_Cc );
 
         cv_bridge::CvImage outImage;
         outImage.header.stamp    = image_msg->header.stamp;
         outImage.header.frame_id = "eis";
-        outImage.encoding        = "monon8";
+        outImage.encoding        = "mono8";
         outImage.image           = image_eis;
         image_pub.publish( outImage );
 
         if ( is_show )
         {
             cv::imshow( "src", image_in );
-            cv::imshow( "src", image_eis );
+            cv::imshow( "eis", image_eis );
+            cv::waitKey( 10 );
         }
     }
 }
@@ -78,14 +80,18 @@ main( int argc, char** argv )
         return 0;
     }
 
+    Eigen::Matrix3d R_bC;
+    R_bC << 0, 0, 1, -1, 0, 0, 0, -1, 0;
+    q_bC = Eigen::Quaterniond( R_bC );
+
     m_eis = new Eis( camera_file, angle_row, angle_col, max_size );
 
-    image_pub = n.advertise< sensor_msgs::Image >( "/eis_imega", 1 );
+    image_pub = n.advertise< sensor_msgs::Image >( "/eis_image", 1 );
 
-    message_filters::Subscriber< sensor_msgs::Image > sub_img( n, "/left_image", 2 );
+    message_filters::Subscriber< sensor_msgs::Image > sub_img( n, "/image_raw", 2 );
     message_filters::Subscriber< sensor_msgs::Imu > sub_imu( n, "/imu", 2 );
 
-    typedef message_filters::sync_policies::ExactTime< sensor_msgs::Image, sensor_msgs::Imu > SyncPolicy;
+    typedef message_filters::sync_policies::ApproximateTime< sensor_msgs::Image, sensor_msgs::Imu > SyncPolicy;
     //    typedef message_filters::sync_policies::ApproximateTime< sensor_msgs::Image,
     //    sensor_msgs::Imu > SyncPolicy;
     message_filters::Synchronizer< SyncPolicy > sync( SyncPolicy( 3 ), sub_img, sub_imu );
@@ -98,10 +104,7 @@ main( int argc, char** argv )
         cv::namedWindow( "eis", CV_WINDOW_NORMAL );
     }
 
-    while ( ros::ok( ) )
-    {
-        ros::spinOnce( );
-    }
+    ros::spin( );
 
     std::cout << "[#INFO] EIS shut down." << std::endl;
     return 0;

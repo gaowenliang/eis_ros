@@ -1,5 +1,7 @@
 #include "eis.h"
 #include <cv_bridge/cv_bridge.h>
+#include <geometry_msgs/Quaternion.h>
+#include <geometry_msgs/QuaternionStamped.h>
 #include <iostream>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
@@ -10,6 +12,7 @@
 #include <sensor_msgs/Imu.h>
 
 ros::Publisher image_pub;
+ros::Publisher cameraPose_pub;
 
 bool is_show      = true;
 bool is_eis_on    = true;
@@ -18,6 +21,15 @@ bool is_first_run = true;
 Eis* m_eis;
 Eigen::Quaterniond q_ec_tgt;
 Eigen::Quaterniond q_bC;
+
+void
+cameraPoseCallback( const geometry_msgs::QuaternionConstPtr& pose_image )
+{
+    Eigen::Quaterniond q_ec_new( pose_image->w, pose_image->x, pose_image->y, pose_image->z );
+    q_ec_tgt = q_ec_new.normalized( );
+
+    std::cout << "[#IFNO] Refresh camera orientation." << std::endl;
+}
 
 void
 imageProcessCallback( const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::ImuConstPtr& imu_msg )
@@ -38,6 +50,7 @@ imageProcessCallback( const sensor_msgs::ImageConstPtr& image_msg, const sensor_
     else
     {
         Eigen::Quaterniond q_Cc = q_bC.conjugate( ) * q_eb.conjugate( ) * q_ec_tgt;
+        Eigen::Quaterniond q_bc = q_bC * q_Cc;
 
         cv::Mat image_eis = m_eis->process( image_in, q_Cc );
 
@@ -47,6 +60,14 @@ imageProcessCallback( const sensor_msgs::ImageConstPtr& image_msg, const sensor_
         outImage.encoding        = "mono8";
         outImage.image           = image_eis;
         image_pub.publish( outImage );
+
+        geometry_msgs::QuaternionStamped q_msg;
+        q_msg.header       = outImage.header;
+        q_msg.quaternion.w = q_bc.w( );
+        q_msg.quaternion.x = q_bc.x( );
+        q_msg.quaternion.y = q_bc.y( );
+        q_msg.quaternion.z = q_bc.z( );
+        cameraPose_pub.publish( q_msg );
 
         if ( is_show )
         {
@@ -86,7 +107,10 @@ main( int argc, char** argv )
 
     m_eis = new Eis( camera_file, angle_row, angle_col, max_size );
 
-    image_pub = n.advertise< sensor_msgs::Image >( "/eis_image", 1 );
+    image_pub      = n.advertise< sensor_msgs::Image >( "/eis_image", 1 );
+    cameraPose_pub = n.advertise< geometry_msgs::QuaternionStamped >( "/eis_camera_q_bc", 1 );
+
+    ros::Subscriber camera_pose_sub = n.subscribe( "/cameraOrientationTarget", 1, cameraPoseCallback );
 
     message_filters::Subscriber< sensor_msgs::Image > sub_img( n, "/image_raw", 2 );
     message_filters::Subscriber< sensor_msgs::Imu > sub_imu( n, "/imu", 2 );

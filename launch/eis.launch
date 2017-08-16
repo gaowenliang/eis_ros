@@ -4,8 +4,8 @@
          <remap from="/image_raw" to="/djiros/image"/>
          <remap from="/imu" to="/djiros/imu"/>
          <param name="camera_file" type="string" value= "/home/gao/ws2/devel/lib/camera_model/px1_fisheye_camera_calib.yaml"/>
-         <param name="angle_row" type="double" value="70.0"/>
-         <param name="angle_col" type="double" value="55.0"/>
+         <param name="angle_row" type="double" value="100.0"/>
+         <param name="angle_col" type="double" value="90.0"/>
          <param name="max_size" type="int" value="400"/>
      </node>
 

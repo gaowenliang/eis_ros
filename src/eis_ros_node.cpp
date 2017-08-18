@@ -1,7 +1,9 @@
 #include "eis.h"
+#include <code_utils/math_utils/math_utils.h>
 #include <cv_bridge/cv_bridge.h>
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/QuaternionStamped.h>
+#include <geometry_msgs/Vector3.h>
 #include <iostream>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
@@ -27,6 +29,18 @@ cameraPoseCallback( const geometry_msgs::QuaternionConstPtr& pose_image )
 {
     Eigen::Quaterniond q_ec_new( pose_image->w, pose_image->x, pose_image->y, pose_image->z );
     q_ec_tgt = q_ec_new.normalized( );
+
+    std::cout << "[#IFNO] Refresh camera orientation." << std::endl;
+}
+
+void
+cameraEularCallback( const geometry_msgs::Vector3ConstPtr& eular )
+{
+    double roll  = eular->x;
+    double pitch = eular->y;
+    double yaw   = eular->z;
+
+    q_ec_tgt = Eigen::Quaterniond( math_utils::eularToDCM( yaw, pitch, roll ) );
 
     std::cout << "[#IFNO] Refresh camera orientation." << std::endl;
 }
@@ -98,6 +112,13 @@ main( int argc, char** argv )
     if ( max_size <= 0 )
     {
         std::cout << "#[ERROR] Error with output image Size." << std::endl;
+        ros::shutdown( );
+        return 0;
+    }
+    if ( camera_file.empty( ) )
+    {
+        std::cout << "#[ERROR] Error with camera calibration file." << std::endl;
+        ros::shutdown( );
         return 0;
     }
 
@@ -111,6 +132,7 @@ main( int argc, char** argv )
     cameraPose_pub = n.advertise< geometry_msgs::QuaternionStamped >( "/eis_camera_q_bc", 1 );
 
     ros::Subscriber camera_pose_sub = n.subscribe( "/cameraOrientationTarget", 1, cameraPoseCallback );
+    ros::Subscriber camera_eul_sub = n.subscribe( "/cameraOrientationEular", 1, cameraEularCallback );
 
     message_filters::Subscriber< sensor_msgs::Image > sub_img( n, "/image_raw", 2 );
     message_filters::Subscriber< sensor_msgs::Imu > sub_imu( n, "/imu", 2 );

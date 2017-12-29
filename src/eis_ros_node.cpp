@@ -1,3 +1,10 @@
+#define BACKWARD_HAS_DW 1
+#include "backward.hpp"
+namespace backward
+{
+backward::SignalHandling sh;
+}
+
 #include "eis.h"
 #include <code_utils/math_utils/math_utils.h>
 #include <cv_bridge/cv_bridge.h>
@@ -48,10 +55,14 @@ cameraEularCallback( const geometry_msgs::Vector3ConstPtr& eular )
 void
 imageProcessCallback( const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::ImuConstPtr& imu_msg )
 {
+    double start_t = sys_utils::timeInSeconds( );
+
     cv::Mat image_in = cv_bridge::toCvCopy( image_msg, "mono8" )->image;
 
-    Eigen::Quaterniond q_eb( imu_msg->orientation.w, imu_msg->orientation.x,
-                             imu_msg->orientation.y, imu_msg->orientation.z );
+    Eigen::Quaterniond q_eb( imu_msg->orientation.w,
+                             imu_msg->orientation.x,
+                             imu_msg->orientation.y,
+                             imu_msg->orientation.z );
 
     if ( is_first_run )
     {
@@ -82,6 +93,9 @@ imageProcessCallback( const sensor_msgs::ImageConstPtr& image_msg, const sensor_
         q_msg.quaternion.y = q_bc.y( );
         q_msg.quaternion.z = q_bc.z( );
         cameraPose_pub.publish( q_msg );
+
+        std::cout << "[INFO] eis cost: " << ( sys_utils::timeInSeconds( ) - start_t ) * 1000
+                  << " ms" << std::endl;
 
         if ( is_show )
         {
@@ -125,6 +139,7 @@ main( int argc, char** argv )
     Eigen::Matrix3d R_bC;
     R_bC << 0, 0, 1, -1, 0, 0, 0, -1, 0;
     q_bC = Eigen::Quaterniond( R_bC );
+    std::cout << "q_bC " << q_bC.coeffs( ).transpose( ) << std::endl;
 
     m_eis = new Eis( camera_file, angle_row, angle_col, max_size );
 
@@ -151,7 +166,6 @@ main( int argc, char** argv )
     }
 
     ros::spin( );
-
     std::cout << "[#INFO] EIS shut down." << std::endl;
     return 0;
 }

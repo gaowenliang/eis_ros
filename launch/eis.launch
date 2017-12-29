@@ -3,8 +3,8 @@
     <node pkg="eis_ros" type="eis_node" name="eis" output="screen">
          <remap from="/image_raw" to="/djiros/image"/>
          <remap from="/imu" to="/djiros/imu"/>
-         <param name="camera_file" type="string" value= "$(find eis_ros)/px1_fisheye_camera_calib.yaml"/>
-         <param name="angle_row" type="double" value="100.0"/>
+         <param name="camera_file" type="string" value= "$(find eis_ros)/config/px1_fisheye_camera_calib.yaml"/>
+          <param name="angle_row" type="double" value="100.0"/>
          <param name="angle_col" type="double" value="90.0"/>
          <param name="max_size" type="int" value="400"/>
      </node>

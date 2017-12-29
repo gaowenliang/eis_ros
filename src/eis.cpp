@@ -3,6 +3,8 @@
 Eis::Eis( string camera_model_file, double pinhole_angle_row, double pinhole_angle_col, int pinhole_max_size )
 {
     m_cam = camera_model::CameraFactory::instance( )->generateCameraFromYamlFile( camera_model_file );
+
+    std::cout << m_cam->parametersToString( ) << std::endl;
     m_eis = new imageCropper( m_cam, pinhole_angle_row, pinhole_angle_col, pinhole_max_size, 1 );
 
     m_is_eis_on = true;

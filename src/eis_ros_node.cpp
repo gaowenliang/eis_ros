@@ -7,6 +7,7 @@ backward::SignalHandling sh;
 
 #include "eis.h"
 #include <code_utils/math_utils/math_utils.h>
+#include <code_utils/sys_utils/timeinseconds.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/QuaternionStamped.h>
